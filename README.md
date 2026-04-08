@@ -1,5 +1,10 @@
 # Prompt Architect for Handy
 
+![Token Savings](https://img.shields.io/badge/Token%20Savings-~74%25-black?style=for-the-badge&logoColor=white)
+![Latency](https://img.shields.io/badge/Latency-~2%20sec-black?style=for-the-badge&logoColor=white)
+![Model](https://img.shields.io/badge/Local%20LLM-Qwen%203.5%200.5B-black?style=for-the-badge&logoColor=white)
+![Platform](https://img.shields.io/badge/Platform-macOS-black?style=for-the-badge&logo=apple&logoColor=white)
+
 A local speech-to-text prompt optimizer for [Handy](https://github.com/cjpais/Handy). Converts your rambling voice transcripts into clean, structured LLM prompts — entirely on-device, in under 2 seconds, with zero API costs.
 
 Built for Mac users who use Handy for speech-to-text and want better results when sending prompts to any LLM.
@@ -10,7 +15,7 @@ When you use speech-to-text to talk to an LLM, you get something like this:
 
 > "Hey Claude. I'm looking to build a web app. It's a very simple to do app for myself, but I want to make sure that I can easily access it on my GitHub page and have it be easily accessible from anywhere in the world and even my friends and family can go and use it. Use it. You know what I'm saying? Something really cool and clean and very impactful for everybody to go and use, but I want it to be a little bit different. Make sure that it's really impactful and it's really cool and it's not just like any other to do app, you know?"
 
-That works, but the LLM has to wade through filler to figure out what you actually want. It often asks clarifying questions or guesses wrong.
+That's **~145 tokens** of rambling. The LLM has to wade through filler to figure out what you actually want. It often asks clarifying questions or guesses wrong — costing you an extra round-trip and even more tokens.
 
 ## The Solution
 
@@ -18,9 +23,22 @@ Prompt Architect post-processes your Handy transcript through a tiny local model
 
 > [BUILD] Design a simple to-do app for myself from my GitHub page so anyone can access it easily. Outline features, style/technology, target audience, technical details.
 
-Same intent, zero filler, clear deliverables. The receiving LLM can act on it immediately with no follow-up questions needed.
+That's **~33 tokens**. Same intent, zero filler, clear deliverables. The receiving LLM can act on it immediately with no follow-up questions needed.
+
+**That's a 77% token reduction on a single prompt.** Across real-world testing, Prompt Architect averages a **~74% reduction** in input tokens — your rambling speech gets compressed to roughly 1/4 of its original size while preserving all the important details. If you're using a paid API, that's real money saved on every single interaction.
 
 ## How It Works
+
+```mermaid
+graph LR
+    A[🎙️ Voice Input] --> B[Handy App]
+    B --> C[Ollama: Qwen 3.5 0.5B]
+    C --> D[Clean Tagged Prompt]
+    D --> E[Any LLM: Claude / Gemini / ChatGPT]
+
+    style C fill:#000,stroke:#fff,stroke-width:2px,color:#fff
+    style D fill:#000,stroke:#fff,stroke-width:2px,color:#fff
+```
 
 Handy captures your voice → speech-to-text transcript → Ollama runs a local Qwen 3.5 0.5B model with a custom Modelfile → clean tagged prompt comes out.
 
@@ -50,7 +68,7 @@ ollama create prompt-architect-handy -f Modelfile
 
 Open Handy → Settings → Advanced → Post-Processing.
 
-Set the model to `prompt-architect` and paste this as the post-processing prompt:
+Set the model to `prompt-architect-handy` and paste this as the post-processing prompt:
 ```
 Convert this speech transcript into a refined prompt. Output ONLY the tagged instruction, nothing else. Transcript: ${output}
 ```
@@ -84,6 +102,7 @@ The system classifies your intent automatically:
 |---|---|
 | **You say** | "So I want to make a web app for my robotics AI research lab... very Apple aesthetic... not sure what exactly... want it popular and make money... just stick in planning mode and lay out what I need" |
 | **You get** | `[PLAN] Design a web app for a robotics AI research lab. Requirements: minimalist Apple-inspired aesthetic, high visual polish, and broad appeal. Outline goals, target audience, feature set, tech stack, and monetization strategy.` |
+| **Tokens** | ~113 → ~34 **(70% saved)** |
 
 **Building something:**
 
@@ -91,6 +110,7 @@ The system classifies your intent automatically:
 |---|---|
 | **You say** | "Make my grandpa's LLM GitHub repo better... so people can run Google Gemini or OpenRouter or local models... help grandparents on old Windows laptops... I'm a Mac user" |
 | **You get** | `[BUILD] Optimize the "Grandpa's LLM" GitHub repository for public deployment. Enable support for Google Gemini, OpenRouter, and local models. Focus on a lightweight UI for low-spec Windows laptops to assist elderly users. Ensure macOS cross-compatibility.` |
+| **Tokens** | ~177 → ~46 **(74% saved)** |
 
 **Fixing a bug:**
 
@@ -122,7 +142,7 @@ The 0.5B model is the sweet spot: fast enough to feel instant, accurate enough t
 ```
 FROM gemma4:e2b
 ```
-Then rebuild: `ollama create prompt-architect -f Modelfile`
+Then rebuild: `ollama create prompt-architect-handy -f Modelfile`
 
 ## Requirements
 
@@ -150,6 +170,8 @@ This system was developed through iterative prompt engineering — no fine-tunin
 5. Tested larger models (Gemma 4 E2B) to validate prompt quality, then brought learnings back to 0.5B
 6. Final system: 8/10 accuracy in under 2 seconds
 
+Prompt architecture co-developed with [Claude](https://claude.ai) (Anthropic) and [Gemini](https://gemini.google.com) (Google).
+
 ## Roadmap
 
 **Model Distillation** — Generate hundreds of input/output pairs using a larger model (Gemma 4 E2B, Claude, Gemini), then fine-tune the Qwen 0.5B on those pairs. This would internalize the prompt patterns directly into the model weights, allowing a smaller system prompt, faster inference, and pushing accuracy from ~8/10 toward 9.5/10 without sacrificing speed.
@@ -160,21 +182,24 @@ This system was developed through iterative prompt engineering — no fine-tunin
 
 **Cross-Platform Support** — Test and document setup for Linux and Windows users running Ollama + Handy.
 
+## Community
 
-## Contributing
+I'd love to hear how you're using Prompt Architect. Here's how to get involved:
 
-Found a rambling that the model fumbles? Open an issue with:
-1. Your raw speech-to-text input
-2. What the model output
-3. What the ideal output should have been
+**Share your results** — Tried it out? Open a [Discussion](https://github.com/MaxSikorski/prompt-architect-handy/discussions) and tell us how it's working for you. How many tokens are you saving? What ramblings does it handle well? Before/after comparisons are especially welcome.
 
-These real-world failures are the best way to improve the system for everyone.
+**Report failures** — Found a rambling the model fumbles? [Open an issue](https://github.com/MaxSikorski/prompt-architect-handy/issues) with your raw speech-to-text input, what the model output, and what the ideal output should have been. These real-world failures are the most valuable way to improve the system for everyone.
+
+**Contribute examples** — Crafted better few-shot examples that work well for your use case? Submit a [Pull Request](https://github.com/MaxSikorski/prompt-architect-handy/pulls) with your improved Modelfile. The more diverse the examples, the better the model performs across different speech patterns.
+
+**Spread the word** — If Prompt Architect is saving you time and tokens, star the repo and share it with the [Handy community](https://github.com/cjpais/Handy/discussions). The more users testing it, the faster it improves.
 
 ## Credits
 
 - [Handy](https://github.com/cjpais/Handy) by CJ Pais — the speech-to-text app that makes this workflow possible
 - [Ollama](https://ollama.com) — local model inference
 - [Qwen 3.5](https://huggingface.co/Qwen) by Alibaba — the default model
+- Prompt architecture co-developed with [Claude](https://claude.ai) (Anthropic) and [Gemini](https://gemini.google.com) (Google)
 
 ## License
 
