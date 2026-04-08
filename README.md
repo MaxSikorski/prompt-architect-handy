@@ -29,16 +29,7 @@ That's **~33 tokens**. Same intent, zero filler, clear deliverables. The receivi
 
 ## How It Works
 
-```mermaid
-graph LR
-    A[🎙️ Voice Input] --> B[Handy App]
-    B --> C[Ollama: Qwen 3.5 0.5B]
-    C --> D[Clean Tagged Prompt]
-    D --> E[Any LLM: Claude / Gemini / ChatGPT]
-
-    style C fill:#000,stroke:#fff,stroke-width:2px,color:#fff
-    style D fill:#000,stroke:#fff,stroke-width:2px,color:#fff
-```
+![How It Works](architecture.png)
 
 Handy captures your voice → speech-to-text transcript → Ollama runs a local Qwen 3.5 0.5B model with a custom Modelfile → clean tagged prompt comes out.
 
