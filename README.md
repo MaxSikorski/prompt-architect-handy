@@ -1,8 +1,8 @@
 # Prompt Architect for Handy
 
-![Token Savings](https://img.shields.io/badge/Token%20Savings-~74%25-black?style=for-the-badge&logoColor=white)
-![Latency](https://img.shields.io/badge/Latency-~2%20sec-black?style=for-the-badge&logoColor=white)
-![Model](https://img.shields.io/badge/Local%20LLM-Qwen%203.5%200.5B-black?style=for-the-badge&logoColor=white)
+![Token Savings](https://img.shields.io/badge/Token%20Savings-~74%25-2ea44f?style=for-the-badge)
+![Latency](https://img.shields.io/badge/Latency-~2%20sec-0969da?style=for-the-badge)
+![Model](https://img.shields.io/badge/Local%20LLM-Qwen%203.5%200.5B-8957e5?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/Platform-macOS-black?style=for-the-badge&logo=apple&logoColor=white)
 
 A local speech-to-text prompt optimizer for [Handy](https://github.com/cjpais/Handy). Converts your rambling voice transcripts into clean, structured LLM prompts — entirely on-device, in under 2 seconds, with zero API costs.
@@ -64,18 +64,38 @@ cd prompt-architect-handy
 ollama create prompt-architect-handy -f Modelfile
 ```
 
-**4. Configure Handy**
+**4. Configure Handy's Post-Processing**
 
-Open Handy → Settings → Advanced → Post-Processing.
+This is the key step. Handy has two separate hotkeys — one for regular transcription and one for transcription *with post-processing*. You need to configure the post-processing settings so Handy knows to run your transcript through the Prompt Architect model.
 
-Set the model to `prompt-architect-handy` and paste this as the post-processing prompt:
+Open Handy → click the menu bar icon → Settings → scroll down to **Advanced** → **Post-Processing**.
+
+In the post-processing settings:
+
+- Set the **Provider** to `Custom`
+- Set the **Model** to `prompt-architect-handy`
+- Set the **Prompt** to:
 ```
 Convert this speech transcript into a refined prompt. Output ONLY the tagged instruction, nothing else. Transcript: ${output}
 ```
 
-**5. Talk naturally**
+**5. Learn the Hotkeys**
 
-That's it. Speak into Handy like you normally do. Ramble, say "um", say "you know what I'm saying" — the system handles all of it.
+This is important — Handy uses **different hotkeys** for regular transcription vs. post-processed transcription:
+
+| Action | Default Hotkey |
+|--------|---------------|
+| Regular transcription (no optimization) | `Option + Space` |
+| **Transcription with Prompt Architect** | **`Option + Shift + Space`** |
+| Cancel | `Escape` |
+
+To use Prompt Architect, you must use **`Option + Shift + Space`** (not the regular `Option + Space`). The regular hotkey will just transcribe your speech as-is without running it through the optimizer.
+
+You can remap these shortcuts in Handy's settings if you prefer different key combinations.
+
+**6. Talk naturally**
+
+Press `Option + Shift + Space`, speak into Handy like you normally do — ramble, say "um", say "you know what I'm saying" — then press the hotkey again (or release if using push-to-talk). The system handles the rest and pastes the optimized prompt wherever your cursor is.
 
 ## What You Get
 
@@ -100,7 +120,7 @@ The system classifies your intent automatically:
 
 | | |
 |---|---|
-| **You say** | "So I want to make a web app for my robotics AI research lab... very Apple aesthetic... not sure what exactly... want it popular and make money... just stick in planning mode and lay out what I need" |
+| **You say** | "So I want to make a web app for my robotics AI research lab... very Apple aesthetic... not sure what exactly... want it popular and revenue generating... just stick in planning mode and lay out what I need" |
 | **You get** | `[PLAN] Design a web app for a robotics AI research lab. Requirements: minimalist Apple-inspired aesthetic, high visual polish, and broad appeal. Outline goals, target audience, feature set, tech stack, and monetization strategy.` |
 | **Tokens** | ~113 → ~34 **(70% saved)** |
 
@@ -170,7 +190,7 @@ This system was developed through iterative prompt engineering — no fine-tunin
 5. Tested larger models (Gemma 4 E2B) to validate prompt quality, then brought learnings back to 0.5B
 6. Final system: 8/10 accuracy in under 2 seconds
 
-Prompt architecture co-developed with [Claude](https://claude.ai) (Anthropic) and [Gemini](https://gemini.google.com) (Google).
+Prompt architecture co-developed with Claude (Anthropic) and Gemini (Google).
 
 ## Roadmap
 
@@ -184,13 +204,21 @@ Prompt architecture co-developed with [Claude](https://claude.ai) (Anthropic) an
 
 ## Community
 
-I'd love to hear how you're using Prompt Architect. Here's how to get involved:
+We'd love to hear how you're using Prompt Architect. Here's how to get involved:
 
 **Share your results** — Tried it out? Open a [Discussion](https://github.com/MaxSikorski/prompt-architect-handy/discussions) and tell us how it's working for you. How many tokens are you saving? What ramblings does it handle well? Before/after comparisons are especially welcome.
 
 **Report failures** — Found a rambling the model fumbles? [Open an issue](https://github.com/MaxSikorski/prompt-architect-handy/issues) with your raw speech-to-text input, what the model output, and what the ideal output should have been. These real-world failures are the most valuable way to improve the system for everyone.
 
-**Contribute examples** — Crafted better few-shot examples that work well for your use case? Submit a [Pull Request](https://github.com/MaxSikorski/prompt-architect-handy/pulls) with your improved Modelfile. The more diverse the examples, the better the model performs across different speech patterns.
+**Contribute examples** — If you've crafted better few-shot examples or found ramblings that could improve the Modelfile, submit a [Pull Request](https://github.com/MaxSikorski/prompt-architect-handy/pulls). To contribute an example, use this format:
+
+```
+EXAMPLE:
+Input: "<your raw speech-to-text transcript>"
+Output: [TAG] <the ideal optimized prompt>
+```
+
+Include the raw rambling exactly as your speech-to-text produced it (filler and all) and the cleanest output you think the model should produce. The more diverse the examples — different topics, different intent tags, different speaking styles — the better the model performs for everyone.
 
 **Spread the word** — If Prompt Architect is saving you time and tokens, star the repo and share it with the [Handy community](https://github.com/cjpais/Handy/discussions). The more users testing it, the faster it improves.
 
