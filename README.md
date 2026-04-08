@@ -1,9 +1,14 @@
-# Prompt Architect for Handy
-
-![Token Savings](https://img.shields.io/badge/Token%20Savings-~74%25-2ea44f?style=for-the-badge)
-![Latency](https://img.shields.io/badge/Latency-~2%20sec-0969da?style=for-the-badge)
-![Model](https://img.shields.io/badge/Local%20LLM-Qwen%203.5%200.5B-8957e5?style=for-the-badge)
-![Platform](https://img.shields.io/badge/Platform-macOS-black?style=for-the-badge&logo=apple&logoColor=white)
+<h1 align="center">
+  <img src="logo-handy.png" width="160" height="160" />
+  <br />
+  Prompt Architect for Handy
+</h1>
+<p align="center">
+  <img src="https://img.shields.io/badge/Token%20Savings-~74%25-2ea44f?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Latency-~2%20sec-0969da?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Local%20LLM-Qwen%203.5%200.5B-8957e5?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Platform-macOS-black?style=for-the-badge&logo=apple&logoColor=white" />
+</p>
 
 A local speech-to-text prompt optimizer for [Handy](https://github.com/cjpais/Handy). Converts your rambling voice transcripts into clean, structured LLM prompts — entirely on-device, in under 2 seconds, with zero API costs.
 
