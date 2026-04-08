@@ -1,0 +1,1 @@
+Convert this speech transcript into a refined prompt. Output ONLY the tagged instruction, nothing else. Transcript: ${output}
